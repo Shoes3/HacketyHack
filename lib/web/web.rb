@@ -27,6 +27,7 @@ module Web
   
 end
 
+# TODO: Need to be converted to Nogokiri
 module Hpricot
   class Doc
     def widget(slot)

@@ -1,10 +1,14 @@
-require 'hpricot'
+begin
+  require 'nokogiri'
+rescue Exception => e
+  require 'hpricot'
+end
 
 class Comic
   attr_reader :rss, :title
 
   def initialize(body)
-    @rss = Hpricot.XML(body)
+    @rss = defined?(Nokogiri) ? Nokogiri::XML(body) : Hpricot(body)
     @title = @rss.at("//channel/title").inner_text
   end
 
@@ -23,8 +27,9 @@ Shoes.app :width => 800, :height => 600 do
   @title = "Web Funnies"
   @feeds = [
     "http://xkcd.com/rss.xml",
-    "http://feedproxy.google.com/DilbertDailyStrip?format=xml",
-    "http://www.daybydaycartoon.com/index.xml",
+    # Outdated RSS references
+    #"http://feedproxy.google.com/DilbertDailyStrip?format=xml",
+    #"http://www.daybydaycartoon.com/index.xml",
     ]
 
   stack :margin => 10 do

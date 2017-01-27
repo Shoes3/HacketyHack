@@ -1,7 +1,11 @@
 # requires and initializations needed for /h-ety-h.rb
 # more initializations are in h-ety-h/init.rb
 
-require 'hpricot'
+begin
+  require 'nokogiri'
+rescue Exception => e
+  require 'hpricot'
+end
 
 module ::HH end
 

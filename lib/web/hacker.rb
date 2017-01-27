@@ -34,7 +34,7 @@ class Hacker
 
   def auth_check &blk
     # Hacking around CSRF, This will go away when we switch to http digest auth
-    sign_in = HH::API.get('/users/sign_in') { |f| Hpricot(f.body)}
+    sign_in = HH::API.get('/users/sign_in') { |f| defined?(Nokogiri) ? Nokogiri::XML(f.body) : Hpricot(f.body) }
     csrf = sign_in.at("//input[@name='authenticity_token']").attributes['value']
 
     HH::API.post("/users/sign_in", {"authenticity_token" => csrf, "user[username]" => @name, "user[password]" => @password, "user[remember_me]" => 1}) do |response|
@@ -44,7 +44,7 @@ class Hacker
 
   def sign_up! &blk
     # Hacking around CSRF, This will go away when we switch to http digest auth
-    sign_in = HH::API.get('/users/sign_up') { |f| Hpricot(f.body)}
+    sign_in = HH::API.get('/users/sign_up') { |f| defined?(Nokogiri) ? Nokogiri::XML(f.body) : Hpricot(f.body) }
     csrf = sign_in.at("//input[@name='authenticity_token']").attributes['value']
 
     HH::API.post("/users", {"authenticity_token" => csrf, "user[username]" => @name, "user[email]" => @email, "user[password]" => @password, "user[password_conformation]" => @password}) do |response|
@@ -55,7 +55,7 @@ class Hacker
   def save_program_to_the_cloud name, code, &blk
     # Hacking around CSRF, This will go away when we switch to http digest auth
     program_rel = HH::API.root.at("//a[@rel='/rels/program-new']")
-    new_program = HH::API.get(program_rel.attributes['href']){ |f| Hpricot(f.body) }
+    new_program = HH::API.get(program_rel.attributes['href']){ |f| defined?(Nokogiri) ? Nokogiri::XML(f.body) : Hpricot(f.body) }
     csrf = new_program.at("//meta[@name='csrf-token']")
     form = new_program.at("//form")
     HH::API.post(form.attributes['action'], {"authenticity_token" => csrf, "program[author_username]" => @name, "program[title]" => name, "program[source_code]" => code}) do |response|

@@ -6,7 +6,7 @@ module HH::API
     def root
       if !@refresh_time || (Time.now.to_i - @refresh_time.to_i) > 3600
         @refresh_time = Time.now
-        @root = get('/') { |f| Hpricot(f.body) }
+        @root = get('/') { |f| defined?(Nokogiri) ? Nokogiri::XML(f.body) : Hpricot(f.body) }
       else
         @root
       end
